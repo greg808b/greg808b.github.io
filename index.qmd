@@ -11,10 +11,6 @@ page-layout: full
 title-block-banner: true
 format: 
   html: 
-    embed-resources: true
-    code-copy: true
-    code-link: true
-    code-tools: true
     theme:
       dark: darkly
       light: flatly
