@@ -1,18 +1,7 @@
 ---
 title: "About"
-image: profile.jpg
 about:
   template: jolla
-  links:
-    - icon: house
-      text: Home
-      href: https://greg808b.github.io
-    - icon: linkedin
-      text: LinkedIn
-      href: https://linkedin.com/greg808b
-    - icon: github
-      text: Github
-      href: https://github.com/greg808b
 ---
 
 About this blog
