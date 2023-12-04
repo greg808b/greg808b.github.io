@@ -186,8 +186,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p>This blog shows the relationship between precision and recall in a Machine Learning context.</p>
-<p>-ROC, PR, Confusion Matrix</p>
+<p>Classification is assigning predefined labels to data based on its features. It facilitates the recognition of patterns and the generalization of insights from data. Typical algorithms that incorporate this style of Machine Learning are Logistic Regression, Decision Trees, and Support Vector Machines. One very applicable use in everyone’s daily life is the spam filter. Data is either classified as spam or ham, algorithms can be tuned with datasets to assign these classes to unlabeled data.</p>
 <div class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(</span>
@@ -232,6 +231,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="index_files/figure-html/cell-5-output-1.png" width="589" height="429"></p>
 </div>
 </div>
+<p>This graph shows the precision recall curve which is a similar plot to the ROC but is less dependent on similar class distribution in the data.</p>
 <div class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
