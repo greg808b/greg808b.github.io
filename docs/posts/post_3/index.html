@@ -186,14 +186,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p>Here you can see a linear prediction based on random data with a linear trend. The model finds the most accurate linear expression based on the given data.</p>
+<p>Here you can see a linear prediction based on random data with a linear trend. The model finds the most accurate linear expression based on the given data and graphs its results. Since we created a linear relationship it will have a high accuracy. In other data sets there will not always be a linear relationship to find, which will require non linear regression.</p>
 <div class="cell" data-execution_count="3">
 <div class="cell-output cell-output-display">
 <p><img src="index_files/figure-html/cell-4-output-1.png" width="517" height="356"></p>
 </div>
 </div>
 <p>When predicting trends the algorithm can have high-bias and underfit the data. This leads to it being too simple and not notice more applicable functions. The algorithm can also get high-variance or overfitting in which the model is too trained to the training data that it does not predict accurately on test data.</p>
-<p>Ridge and Lasso Regression are regularization techniques to prevent overfitting and improve the performance of linear regression models by adding a penalty term.</p>
+<p>Ridge and Lasso Regression are regularization techniques to prevent over fitting and improve the performance of linear regression models by adding a penalty term.</p>
 <p>Ridge Regression aims to minimize the sum of squared differences between the observed and predicted values. Lasso Regression uses the absolute value of the coefficients and uses a penalty term.</p>
 <div class="cell" data-execution_count="4">
 <details>
@@ -231,7 +231,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="index_files/figure-html/cell-5-output-1.png" width="672" height="337"></p>
 </div>
 </div>
-<p>Here you can see the accuracy between SVM and Random Forest. Two very different supervised learning models. RandomForest does Non linear regression.</p>
+<p>Here you can see the accuracy between SVM and Random Forest. Two very different supervised learning models. Random Forest performs Non-linear regression.</p>
+<p>This is an example of non linear regression.</p>
 
 
 
