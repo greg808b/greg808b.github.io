@@ -16,7 +16,7 @@ website:
         href: https://github.com/greg808b
 format:
   html:
-    theme: cosmo
+    theme: plain
     css: styles.css
 
 editor: visual
