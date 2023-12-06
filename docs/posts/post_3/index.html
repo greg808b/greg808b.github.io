@@ -186,55 +186,77 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
+<section id="linear-prediction" class="level2">
+<h2 class="anchored" data-anchor-id="linear-prediction">Linear Prediction</h2>
 <p>Here you can see a linear prediction based on random data with a linear trend. The model finds the most accurate linear expression based on the given data and graphs its results. Since we created a linear relationship it will have a high accuracy. In other data sets there will not always be a linear relationship to find, which will require non linear regression.</p>
 <div class="cell" data-execution_count="3">
 <div class="cell-output cell-output-display">
-<p><img src="index_files/figure-html/cell-4-output-1.png" width="517" height="356"></p>
+<p><img src="index_files/figure-html/cell-4-output-1.png" width="585" height="449"></p>
 </div>
 </div>
 <p>When predicting trends the algorithm can have high-bias and underfit the data. This leads to it being too simple and not notice more applicable functions. The algorithm can also get high-variance or overfitting in which the model is too trained to the training data that it does not predict accurately on test data.</p>
 <p>Ridge and Lasso Regression are regularization techniques to prevent over fitting and improve the performance of linear regression models by adding a penalty term.</p>
 <p>Ridge Regression aims to minimize the sum of squared differences between the observed and predicted values. Lasso Regression uses the absolute value of the coefficients and uses a penalty term.</p>
+</section>
+<section id="non-linear-example" class="level2">
+<h2 class="anchored" data-anchor-id="non-linear-example">Non Linear Example</h2>
+<p>This plot is using the same dataset from before.</p>
 <div class="cell" data-execution_count="4">
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-5-output-1.png" width="585" height="449"></p>
+</div>
+</div>
+</section>
+<section id="linear-vs-non-linear-accuracy" class="level2">
+<h2 class="anchored" data-anchor-id="linear-vs-non-linear-accuracy">Linear vs Non Linear Accuracy</h2>
+<p>Here are the r^2 score of the two plots from above:</p>
+<div class="cell" data-execution_count="5">
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear Regression R^2 Score: 96%
+Random Forest Regression R^2 Score: 99%</code></pre>
+</div>
+</div>
+<p>This is a plot of the accuracy between SVM (Linear) and Random Forest (Non Linear). Two very different supervised learning models. This plot shows their performance in predicting trends on data.</p>
+<div class="cell" data-execution_count="6">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> cross_val_score</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">'ignore'</span>)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> preprocess_pipeline.fit_transform(train_data)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train_data[<span class="st">"Survived"</span>]</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>forest_clf <span class="op">=</span> RandomForestClassifier(n_estimators<span class="op">=</span><span class="dv">100</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>forest_clf.fit(X_train, y_train)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> preprocess_pipeline.transform(test_data)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> forest_clf.predict(X_test)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>forest_scores <span class="op">=</span> cross_val_score(forest_clf, X_train, y_train, cv<span class="op">=</span><span class="dv">10</span>)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>forest_scores.mean()</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.svm <span class="im">import</span> SVC</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>svm_clf <span class="op">=</span> SVC(gamma<span class="op">=</span><span class="st">"auto"</span>)</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>svm_scores <span class="op">=</span> cross_val_score(svm_clf, X_train, y_train, cv<span class="op">=</span><span class="dv">10</span>)</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>svm_scores.mean()</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>))</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">1</span>]<span class="op">*</span><span class="dv">10</span>, svm_scores, <span class="st">"."</span>)</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">2</span>]<span class="op">*</span><span class="dv">10</span>, forest_scores, <span class="st">"."</span>)</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>plt.boxplot([svm_scores, forest_scores], labels<span class="op">=</span>(<span class="st">"SVM"</span>, <span class="st">"Random Forest"</span>))</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Accuracy"</span>)</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> cross_val_score</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">'ignore'</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> preprocess_pipeline.fit_transform(train_data)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train_data[<span class="st">"Survived"</span>]</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>forest_clf <span class="op">=</span> RandomForestClassifier(n_estimators<span class="op">=</span><span class="dv">100</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>forest_clf.fit(X_train, y_train)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> preprocess_pipeline.transform(test_data)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> forest_clf.predict(X_test)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>forest_scores <span class="op">=</span> cross_val_score(forest_clf, X_train, y_train, cv<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>forest_scores.mean()</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.svm <span class="im">import</span> SVC</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>svm_clf <span class="op">=</span> SVC(gamma<span class="op">=</span><span class="st">"auto"</span>)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>svm_scores <span class="op">=</span> cross_val_score(svm_clf, X_train, y_train, cv<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>svm_scores.mean()</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>))</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">1</span>]<span class="op">*</span><span class="dv">10</span>, svm_scores, <span class="st">"."</span>)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">2</span>]<span class="op">*</span><span class="dv">10</span>, forest_scores, <span class="st">"."</span>)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>plt.boxplot([svm_scores, forest_scores], labels<span class="op">=</span>(<span class="st">"SVM"</span>, <span class="st">"Random Forest"</span>))</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Accuracy"</span>)</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<p><img src="index_files/figure-html/cell-5-output-1.png" width="672" height="337"></p>
+<p><img src="index_files/figure-html/cell-7-output-1.png" width="672" height="337"></p>
 </div>
 </div>
-<p>Here you can see the accuracy between SVM and Random Forest. Two very different supervised learning models. Random Forest performs Non-linear regression.</p>
 <p>This is an example of non linear regression.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
