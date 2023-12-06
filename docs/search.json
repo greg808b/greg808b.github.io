@@ -74,7 +74,7 @@
     "href": "posts/post_1/index.html#histogram-1",
     "title": "Probabiltiy Theory and Random Variables",
     "section": "Histogram",
-    "text": "Histogram\n\n\nCreating the Histogram\nimport numpy as np\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\n# Load the tips dataset from Seaborn\ntips = sns.load_dataset('tips')\ntotal_bill_data = tips['total_bill']\n\n# Create a histogram to estimate the probability density function (PDF)\nplt.hist(total_bill_data, bins=30, density=True, alpha=0.7, color='blue', label='Histogram')\n\n# Plot formatting\nplt.title('Probability Density Function (PDF) of Total Bill Amount')\nplt.xlabel('Total Bill Amount ($)')\nplt.ylabel('Probability Density')\nplt.legend()\nplt.show()"
+    "text": "Histogram\n\n\nCreating the Histogram\nimport numpy as np\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\n# Load the tips dataset from Seaborn\ntips = sns.load_dataset('tips')\ntotal_bill_data = tips['total_bill']\n\n# Create a histogram to estimate the probability density function (PDF)\nplt.hist(total_bill_data, bins=30, density=True, alpha=0.7, color='skyblue', edgecolor = \"black\", label='Histogram')\n\n# Plot formatting\nplt.title('Probability Density Function (PDF) of Total Bill Amount')\nplt.xlabel('Total Bill Amount ($)')\nplt.ylabel('Probability Density')\nplt.legend()\nplt.show()"
   },
   {
     "objectID": "posts/post_1/index.html#pdfkde",
