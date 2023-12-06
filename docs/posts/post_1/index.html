@@ -22,6 +22,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -155,33 +189,146 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>Probability is a major part of the underlying pieces of Machine Learning. When preforming actual tasks, it is not immediately apparent the role that it plays. Machine learning is all about defining the probability that some data relates to a class. Two examples that show probability in action are the Probability Density Function (PDF) and the Kernel Density Estimation (KDE). A histogram is another useful probability plot that shows the actual value distributions of the data in a density form. Shown below is an example of a PDF using the skl iris dataset. It plots the density of sepal length and how present each data point was within the set. It is a jagged plot due to the small amount of data points available.</p>
+<section id="histogram" class="level2">
+<h2 class="anchored" data-anchor-id="histogram">Histogram</h2>
 <p>Here is a histogram of the iris data.</p>
 <div class="cell" data-execution_count="1">
+<details>
+<summary>Creating the Histogram</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_iris</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the Iris dataset</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>iris <span class="op">=</span> load_iris()</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>sepal_length_setosa <span class="op">=</span> iris.data[iris.target <span class="op">==</span> <span class="dv">0</span>][:, <span class="dv">0</span>]  <span class="co"># Sepal length of Iris setosa</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a function to compute the probability density function (PDF)</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_pdf(data, num_bins<span class="op">=</span><span class="dv">20</span>):</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">    Compute the probability density function (PDF) of a dataset.</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">    Parameters:</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co">    - data: Input dataset.</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">    - num_bins: Number of bins for the histogram.</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co">    - bin_edges: Bin edges.</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co">    - pdf_values: PDF values for each bin.</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    hist, bin_edges <span class="op">=</span> np.histogram(data, bins<span class="op">=</span>num_bins, density<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    bin_centers <span class="op">=</span> (bin_edges[:<span class="op">-</span><span class="dv">1</span>] <span class="op">+</span> bin_edges[<span class="dv">1</span>:]) <span class="op">/</span> <span class="dv">2</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    pdf_values <span class="op">=</span> hist <span class="op">/</span> np.<span class="bu">sum</span>(hist)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> bin_centers, pdf_values</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the PDF for sepal length of Iris setosa</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>bin_centers, pdf_values <span class="op">=</span> compute_pdf(sepal_length_setosa)</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the PDF</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>plt.plot(bin_centers, pdf_values, label<span class="op">=</span><span class="st">'PDF - Sepal Length (Iris setosa)'</span>)</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Probability Density Function (PDF) of Sepal Length (Iris setosa)'</span>)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Sepal Length (cm)'</span>)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Probability Density'</span>)</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <p><img src="index_files/figure-html/cell-2-output-1.png" width="597" height="449"></p>
 </div>
 </div>
+</section>
+<section id="kdepdf" class="level2">
+<h2 class="anchored" data-anchor-id="kdepdf">KDE/PDF</h2>
 <p>Here is an example of a KDE/PDF plot. This shows the estimated density if the data and model were to be generalized. This is the distribution on a larger dataset and the predictions the model would make on a larger test. A PDF is almost the same except it is a rounded curve using the current data set.</p>
 <div class="cell" data-execution_count="2">
+<details>
+<summary>Creating the KDE</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.neighbors <span class="im">import</span> KernelDensity</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Reshape the data to fit the input requirements of KernelDensity</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>sepal_length_setosa <span class="op">=</span> sepal_length_setosa.reshape(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the Kernel Density Estimation model</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>kde <span class="op">=</span> KernelDensity(bandwidth<span class="op">=</span><span class="fl">0.6</span>, kernel<span class="op">=</span><span class="st">'gaussian'</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>kde.fit(sepal_length_setosa)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate data points for the plot</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>x_values <span class="op">=</span> np.linspace(<span class="bu">min</span>(sepal_length_setosa), <span class="bu">max</span>(sepal_length_setosa), <span class="dv">1000</span>).reshape(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Score_samples returns the log likelihood of the samples</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>log_density_values <span class="op">=</span> kde.score_samples(x_values)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the Kernel Density Estimation</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>plt.plot(x_values, np.exp(log_density_values), label<span class="op">=</span><span class="st">'Kernel Density Estimation (KDE)'</span>)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Kernel Density Estimation (KDE) of Sepal Length (Iris setosa)'</span>)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Sepal Length (cm)'</span>)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Probability Density'</span>)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <p><img src="index_files/figure-html/cell-3-output-1.png" width="597" height="449"></p>
 </div>
 </div>
 <p>These are another example of the same plots (Histogram and KDE/PDF) using a different dataset.</p>
-<p>Histogram</p>
+</section>
+<section id="histogram-1" class="level2">
+<h2 class="anchored" data-anchor-id="histogram-1">Histogram</h2>
 <div class="cell" data-execution_count="3">
+<details>
+<summary>Creating the Histogram</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the tips dataset from Seaborn</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>tips <span class="op">=</span> sns.load_dataset(<span class="st">'tips'</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>total_bill_data <span class="op">=</span> tips[<span class="st">'total_bill'</span>]</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a histogram to estimate the probability density function (PDF)</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>plt.hist(total_bill_data, bins<span class="op">=</span><span class="dv">30</span>, density<span class="op">=</span><span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.7</span>, color<span class="op">=</span><span class="st">'blue'</span>, label<span class="op">=</span><span class="st">'Histogram'</span>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot formatting</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Probability Density Function (PDF) of Total Bill Amount'</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Total Bill Amount ($)'</span>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Probability Density'</span>)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <p><img src="index_files/figure-html/cell-4-output-1.png" width="597" height="449"></p>
 </div>
 </div>
-<p>PDF/KDE</p>
+</section>
+<section id="pdfkde" class="level2">
+<h2 class="anchored" data-anchor-id="pdfkde">PDF/KDE</h2>
+<p>You can clearly see that in this plot compared to the previous, the curve is smoothed. This is to generalize the data and not overfit on the training set, it will get more realistic predictions on future data.</p>
 <div class="cell" data-execution_count="4">
+<details>
+<summary>Creating the PDF</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the tips dataset from Seaborn</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>tips <span class="op">=</span> sns.load_dataset(<span class="st">'tips'</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>total_bill_data <span class="op">=</span> tips[<span class="st">'total_bill'</span>]</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a Kernel Density Estimation (KDE) plot for the PDF</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>sns.kdeplot(total_bill_data, fill<span class="op">=</span><span class="va">True</span>, color<span class="op">=</span><span class="st">'blue'</span>, label<span class="op">=</span><span class="st">'Probability Density Function (PDF)'</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot formatting</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Probability Density Function (PDF) of Total Bill Amount'</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Total Bill Amount ($)'</span>)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Probability Density'</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <p><img src="index_files/figure-html/cell-5-output-1.png" width="597" height="449"></p>
 </div>
 </div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

@@ -186,54 +186,116 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p>-In Progress</p>
-<p>DB Scan has built in anomaly detection in data that does not fit close enough to the clusters found. -Gaussian Mixtures (density)</p>
+<p>Anomaly and Outlier detection is a crucial function for Machine Learning applications. There will always be data that skews the models predictions. Being able to automatically detect and remove them from the model’s consideration for predictions. The real world applications are for situations such as fraud detection, network security, healthcare monitoring, and environmental monitoring.</p>
+<section id="db-scan-with-outliers" class="level2">
+<h2 class="anchored" data-anchor-id="db-scan-with-outliers">DB Scan with Outliers</h2>
+<p>This is a DB Scan plot using purposefully created blobs of data classified into clusters. The outliers are marked with a red “X”. This is a good example of the outline detection being performed automatically. They are all placed into their own class. DB Scan automatically flags outliers if they are not close enough in proximity to other data points.</p>
 <div class="cell" data-execution_count="1">
 <details>
-<summary>Code</summary>
+<summary>Code for the DB Scan</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> DBSCAN</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_blobs</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate sample data with blobs</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>data, _ <span class="op">=</span> make_blobs(n_samples<span class="op">=</span><span class="dv">300</span>, centers<span class="op">=</span><span class="dv">4</span>, random_state<span class="op">=</span><span class="dv">40</span>, cluster_std<span class="op">=</span><span class="fl">1.0</span>)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply DBSCAN</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>dbscan <span class="op">=</span> DBSCAN(eps<span class="op">=</span><span class="fl">0.6</span>, min_samples<span class="op">=</span><span class="dv">5</span>)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> dbscan.fit_predict(data)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the data points and cluster assignments</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>unique_labels <span class="op">=</span> <span class="bu">set</span>(labels)</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> [plt.cm.Spectral(each) <span class="cf">for</span> each <span class="kw">in</span> np.linspace(<span class="dv">0</span>, <span class="dv">1</span>, <span class="bu">len</span>(unique_labels))]</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> label, color <span class="kw">in</span> <span class="bu">zip</span>(unique_labels, colors):</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> label <span class="op">==</span> <span class="op">-</span><span class="dv">1</span>:</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        color <span class="op">=</span> [<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>]  <span class="co"># Black color for noise points</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    class_member_mask <span class="op">=</span> (labels <span class="op">==</span> label)</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    xy <span class="op">=</span> data[class_member_mask]</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    plt.scatter(xy[:, <span class="dv">0</span>], xy[:, <span class="dv">1</span>], c<span class="op">=</span>[color], edgecolors<span class="op">=</span><span class="st">'k'</span>, s<span class="op">=</span><span class="dv">50</span>, linewidth<span class="op">=</span><span class="fl">0.5</span>, label<span class="op">=</span><span class="ss">f'Cluster </span><span class="sc">{</span>label<span class="sc">}</span><span class="ss">'</span>)</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>anomalies_mask <span class="op">=</span> dbscan.labels_ <span class="op">==</span> <span class="op">-</span><span class="dv">1</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>anomalies <span class="op">=</span> data[anomalies_mask]</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>plt.scatter(anomalies[:, <span class="dv">0</span>], anomalies[:, <span class="dv">1</span>],</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>                c<span class="op">=</span><span class="st">"r"</span>, marker<span class="op">=</span><span class="st">"x"</span>, s<span class="op">=</span><span class="dv">100</span>)</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'DBSCAN Clustering'</span>)</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Feature 1'</span>)</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Feature 2'</span>)</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">"ignore"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate sample data with blobs</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>data, _ <span class="op">=</span> make_blobs(n_samples<span class="op">=</span><span class="dv">300</span>, centers<span class="op">=</span><span class="dv">4</span>, random_state<span class="op">=</span><span class="dv">40</span>, cluster_std<span class="op">=</span><span class="fl">1.0</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply DBSCAN</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>dbscan <span class="op">=</span> DBSCAN(eps<span class="op">=</span><span class="fl">0.6</span>, min_samples<span class="op">=</span><span class="dv">5</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> dbscan.fit_predict(data)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the data points and cluster assignments</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>unique_labels <span class="op">=</span> <span class="bu">set</span>(labels)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> [plt.cm.Spectral(each) <span class="cf">for</span> each <span class="kw">in</span> np.linspace(<span class="dv">0</span>, <span class="dv">1</span>, <span class="bu">len</span>(unique_labels))]</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> label, color <span class="kw">in</span> <span class="bu">zip</span>(unique_labels, colors):</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> label <span class="op">==</span> <span class="op">-</span><span class="dv">1</span>:</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        color <span class="op">=</span> [<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>]  <span class="co"># Black color for noise points</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    class_member_mask <span class="op">=</span> (labels <span class="op">==</span> label)</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    xy <span class="op">=</span> data[class_member_mask]</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    plt.scatter(xy[:, <span class="dv">0</span>], xy[:, <span class="dv">1</span>], c<span class="op">=</span>[color], edgecolors<span class="op">=</span><span class="st">'k'</span>, s<span class="op">=</span><span class="dv">50</span>, linewidth<span class="op">=</span><span class="fl">0.5</span>, label<span class="op">=</span><span class="ss">f'Cluster </span><span class="sc">{</span>label<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>anomalies_mask <span class="op">=</span> dbscan.labels_ <span class="op">==</span> <span class="op">-</span><span class="dv">1</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>anomalies <span class="op">=</span> data[anomalies_mask]</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>plt.scatter(anomalies[:, <span class="dv">0</span>], anomalies[:, <span class="dv">1</span>],</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>                c<span class="op">=</span><span class="st">"r"</span>, marker<span class="op">=</span><span class="st">"x"</span>, s<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'DBSCAN Clustering'</span>)</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Feature 1'</span>)</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Feature 2'</span>)</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <p><img src="index_files/figure-html/cell-2-output-1.png" width="670" height="523"></p>
 </div>
 </div>
+</section>
+<section id="gmm-with-outliers" class="level2">
+<h2 class="anchored" data-anchor-id="gmm-with-outliers">GMM with Outliers</h2>
+<p>Here is a plot of the same data being clustered by a Gaussian Mixture Model(GMM). It can also identify anomalies/outliers. In this example, they are identified based on their score exceeding a certain value. They are scored from their distance from the center. A Gaussian Mixture Model involves K-Means clustering with some generalization.</p>
+<div class="cell" data-execution_count="2">
+<details>
+<summary>Code for the GMM</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_blobs</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.mixture <span class="im">import</span> GaussianMixture</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate synthetic data using make_blobs</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>X, _ <span class="op">=</span> make_blobs(n_samples<span class="op">=</span><span class="dv">300</span>, centers<span class="op">=</span><span class="dv">4</span>, random_state<span class="op">=</span><span class="dv">40</span>, cluster_std<span class="op">=</span><span class="fl">1.0</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a Gaussian Mixture Model (GMM) to the data</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>gmm <span class="op">=</span> GaussianMixture(n_components<span class="op">=</span><span class="dv">4</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>gmm.fit(X)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict cluster labels for each data point</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> gmm.predict(X)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the Mahalanobis distance for each point</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>mahalanobis_distance <span class="op">=</span> gmm.score_samples(X)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Set a threshold to identify outliers</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>outlier_threshold <span class="op">=</span> <span class="op">-</span><span class="dv">5</span>  <span class="co"># Adjust as needed</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Identify outliers based on the Mahalanobis distance</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>outliers <span class="op">=</span> np.where(mahalanobis_distance <span class="op">&lt;</span> outlier_threshold)[<span class="dv">0</span>]</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate data points for the plot</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>x_min, x_max <span class="op">=</span> X[:, <span class="dv">0</span>].<span class="bu">min</span>() <span class="op">-</span> <span class="dv">1</span>, X[:, <span class="dv">0</span>].<span class="bu">max</span>() <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>y_min, y_max <span class="op">=</span> X[:, <span class="dv">1</span>].<span class="bu">min</span>() <span class="op">-</span> <span class="dv">1</span>, X[:, <span class="dv">1</span>].<span class="bu">max</span>() <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>xx, yy <span class="op">=</span> np.meshgrid(np.arange(x_min, x_max, <span class="fl">0.01</span>), np.arange(y_min, y_max, <span class="fl">0.01</span>))</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>Z <span class="op">=</span> <span class="op">-</span>gmm.score_samples(np.c_[xx.ravel(), yy.ravel()])</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>Z <span class="op">=</span> Z.reshape(xx.shape)</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the Gaussian Mixture Model with cluster labels and outliers</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>plt.contour(xx, yy, Z, levels<span class="op">=</span>[<span class="fl">0.5</span>], linewidths<span class="op">=</span><span class="dv">2</span>, colors<span class="op">=</span><span class="st">'black'</span>, label<span class="op">=</span><span class="st">'Decision Boundary'</span>)</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>scatter <span class="op">=</span> plt.scatter(X[:, <span class="dv">0</span>], X[:, <span class="dv">1</span>], c<span class="op">=</span>labels, cmap<span class="op">=</span><span class="st">'viridis'</span>, label<span class="op">=</span><span class="st">'Data Points'</span>)</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>plt.scatter(X[outliers, <span class="dv">0</span>], X[outliers, <span class="dv">1</span>], color<span class="op">=</span><span class="st">'red'</span>, marker<span class="op">=</span><span class="st">'x'</span>, s<span class="op">=</span><span class="dv">100</span>, label<span class="op">=</span><span class="st">'Outliers'</span>)</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Add legend with cluster labels</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>legend_labels <span class="op">=</span> [<span class="st">'Cluster 0'</span>, <span class="st">'Cluster 1'</span>, <span class="st">'Cluster 2'</span>, <span class="st">'Cluster 3'</span>, <span class="st">'Outliers'</span>]</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>plt.legend(handles<span class="op">=</span>scatter.legend_elements()[<span class="dv">0</span>], title<span class="op">=</span><span class="st">'Clusters'</span>, labels<span class="op">=</span>legend_labels)</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot formatting</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Gaussian Mixture Model (GMM) with random Data and Outliers'</span>)</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Feature 1'</span>)</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Feature 2'</span>)</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-3-output-1.png" width="608" height="449"></p>
+</div>
+</div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
